@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
         downEvent.recycle();
         upEvent.recycle();
     }
-    
+
     private void recuperaLinkDaTelegraph() {
         new Thread(() -> {
             try {
