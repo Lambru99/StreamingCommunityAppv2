@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     private String dominioDinamico = "";
     private boolean isAndroidTV = false;
 
-    // Variabili per il Fullscreen
     private View mCustomView;
     private WebChromeClient.CustomViewCallback mCustomViewCallback;
     private int mOriginalOrientation;
@@ -38,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView immagineCursore;
     private float cursorX = 500f;
     private float cursorY = 500f;
-    private final int step = 40; // Velocità del cursore
+    private final int step = 30; // Velocità del cursore
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -46,31 +45,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // 1. Rileva se è una TV
         android.app.UiModeManager uiModeManager = (android.app.UiModeManager) getSystemService(UI_MODE_SERVICE);
         isAndroidTV = (uiModeManager.getCurrentModeType() == android.content.res.Configuration.UI_MODE_TYPE_TELEVISION);
 
         miaWebView = findViewById(R.id.miaWebView);
         immagineCursore = findViewById(R.id.immagineCursore);
 
-        // 2. Configurazione Cursore e Focus
         if (isAndroidTV) {
             immagineCursore.setVisibility(View.VISIBLE);
-            // Disattiviamo il focus nativo della WebView, ora comandiamo noi col cursore!
-            miaWebView.setFocusable(false);
-            miaWebView.setFocusableInTouchMode(false);
+            miaWebView.setFocusable(true);
+            miaWebView.setFocusableInTouchMode(true);
+            miaWebView.requestFocus();
         } else {
             immagineCursore.setVisibility(View.GONE);
             miaWebView.setFocusableInTouchMode(true);
         }
 
-        // 3. Impostazioni WebView
+        // Impostazioni WebView
         miaWebView.getSettings().setJavaScriptEnabled(true);
         miaWebView.getSettings().setSupportMultipleWindows(true);
         String fintoPC = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.9999.99 Safari/537.36";
         miaWebView.getSettings().setUserAgentString(fintoPC);
 
-        // 4. Gestione Popup e Fullscreen (WebChromeClient)
+        // Gestione Popup e Fullscreen (WebChromeClient)
         miaWebView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onCreateWindow(WebView view, boolean isDialog, boolean isUserGesture, android.os.Message resultMsg) {
@@ -120,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 5. Gestione Navigazione e Ad-Block (WebViewClient)
+        // Gestione Navigazione e Ad-Block (WebViewClient)
         miaWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -134,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 6. Tasto Indietro (Back)
+        // Tasto Indietro (Back)
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
@@ -146,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 7. Infine recuperiamo il link
         recuperaLinkDaTelegraph();
     }
 
@@ -162,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
         miaWebView.onResume();
     }
 
-    // --- GESTIONE TELECOMANDO E CURSORE INTELLIGENTE ---
     @Override
     public boolean dispatchKeyEvent(android.view.KeyEvent event) {
         // Se non siamo su TV o siamo a schermo intero (player video), lascia fare ad Android normalmente
@@ -231,8 +226,7 @@ public class MainActivity extends AppCompatActivity {
         downEvent.recycle();
         upEvent.recycle();
     }
-
-    // --- RECUPERO LINK DINAMICO ---
+    
     private void recuperaLinkDaTelegraph() {
         new Thread(() -> {
             try {
