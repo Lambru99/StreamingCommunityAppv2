@@ -23,6 +23,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -40,6 +41,19 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+    // ExoPlayer (AndroidX Media3) per riproduzione HLS nativa
+    implementation(libs.media3.exoplayer)
+    implementation(libs.media3.ui)
+    implementation(libs.media3.hls)
+
+    // AndroidX WebKit per ProxyController
+    implementation(libs.webkit)
+
+    // OkHttp con supporto DNS-over-HTTPS (DoH)
+    implementation(libs.okhttp)
+    implementation(libs.okhttp.dnsoverhttps)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
